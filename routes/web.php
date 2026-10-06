@@ -93,3 +93,14 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/login');
     });
 });
+
+// Temporary Seeding & Migration Route
+Route::get('/run-seed-now', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        return 'SEEDED_SUCCESSFULLY!';
+    } catch (\Exception $e) {
+        return 'ERROR: ' . $e->getMessage();
+    }
+});
