@@ -94,12 +94,39 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-// Temporary Seeding & Migration Route
+// Temporary Direct Seeding Route (Bypasses DatabaseSeeder)
 Route::get('/run-seed-now', function () {
     try {
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-        return 'SEEDED_SUCCESSFULLY!';
+
+        \App\Models\User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'System Admin',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'role' => 'admin',
+            ]
+        );
+
+        \App\Models\User::updateOrCreate(
+            ['email' => 'storekeeper@test.com'],
+            [
+                'name' => 'Storekeeper User',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'role' => 'storekeeper',
+            ]
+        );
+
+        \App\Models\User::updateOrCreate(
+            ['email' => 'manager@test.com'],
+            [
+                'name' => 'Site Manager',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'role' => 'manager',
+            ]
+        );
+
+        return 'USERS_CREATED_SUCCESSFULLY!';
     } catch (\Exception $e) {
         return 'ERROR: ' . $e->getMessage();
     }
